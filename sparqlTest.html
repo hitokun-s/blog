@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset='utf-8'>
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <meta name="description" content="Blog : blog">
+        <title>Blog</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script>
+            var url = "http://dbpedia.org/sparql";
+            var query = [
+                //名前空間定義
+                "PREFIX owl: <http://www.w3.org/2002/07/owl#>",
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+                "PREFIX foaf: <http://xmlns.com/foaf/0.1/>",
+                "PREFIX dc: <http://purl.org/dc/elements/1.1/>",
+                "PREFIX : <http://dbpedia.org/resource/>",
+                "PREFIX dbpedia2: <http://dbpedia.org/property/>",
+                "PREFIX dbpedia: <http://dbpedia.org/>",
+                "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>",
+                "PREFIX dbo: <http://dbpedia.org/ontology/>",
+                
+                //クエリ
+                "SELECT ?name ?birth ?death ?person ",
+                
+                //取得したグラフパターン
+                // ?***＝変数
+                "WHERE {",
+                "?person dbo:birthPlace :Berlin .",
+                "?person dbo:birthDate ?birth .",
+                "?person foaf:name ?name .",
+                "?person dbo:deathDate ?death .",
+                "FILTER (?birth < \"1900-01-01\"^^xsd:date) .",
+                "}",
+                "ORDER BY ?name",
+                "LIMIT 100"
+            ].join(" ");
+            
+            //RDFでのトリプル＝s:subject(述語),p:predicate(術語),o:object(目的語)
+            
+            var query2 = "SELECT count(*) WHERE { ?s ?p ?o }";
+            var query3 = "SELECT DISTINCT ?p { GRAPH ?g {?person ?p ?o}}";
+            var query4 = [
+                "PREFIX scm: <http://www.w3.org/2000/01/rdf-schema#>",
+                "select distinct ?property where { ",
+                "?property scm:domain ",
+                "  <http://dbpedia.org/ontology/Person> . }"
+            ].join(" ");
+
+            console.log("hitokun");
+            $.ajax({
+                dataType: "jsonp",
+                url: url + "?query=" + encodeURIComponent(query4) + "&format=json",
+                success: function(_data) {
+                    var results = _data.results.bindings;
+                    console.log(results);
+                }
+            });
+        </script>
+    </head>
+
+    <body>
+        test2
+    </body>
+</html>
